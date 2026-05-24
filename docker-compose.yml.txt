@@ -1,0 +1,57 @@
+version : "3.8"
+
+
+services:
+  user-db:
+  	image: postgres:15
+  	container_name: user_db
+  	environment:
+  	  POSTGRES_DB: user_db
+  	  POSTGRES_USER: postgre
+  	  POSTGRES_PASSWORD: root
+  	ports:
+  	  - "5433:5432"
+  
+  wallet-db:
+    image: postgres:15
+    container_name: wallet_db
+    environment:
+      POSTGRES_DB: wallet_db
+      POSTGRES_USER: postgre
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5434:5432"
+  
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+      
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/user_db
+      SPRING_DATASOURCE_USERNAME: postgre
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - user-db
+      - eureka-server
+  wallet-service:
+    build: ./wallet-service
+    container_name: wallet-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://wallet-db:5432/wallet_db
+      SPRING_DATASOURCE_USERNAME: postgre
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - wallet-db
+      - eureka-server
+                  

@@ -1,0 +1,65 @@
+version : "3.8"
+
+
+services:
+  user-db:
+    image: postgres:15
+    container_name: user_db
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: postgre
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5433:5432"
+    volumes:
+      - user-db-data:/var/lib/postgresql/data 
+  
+  wallet-db:
+    image: postgres:15
+    container_name: wallet_db
+    environment:
+      POSTGRES_DB: wallet_db
+      POSTGRES_USER: postgre
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5434:5432"
+    volumes:
+      - wallet-db-data:/var/lib/postgresql/data   
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+      
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_USERNAME: postgre
+      DB_PASSWORD: root
+      JWT_SECRET: digitalWalletSuperSecretKeyForJwtTokenSigningMustBe256BitsLong1234	  
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - user-db
+      - eureka-server
+  wallet-service:
+    build: ./wallet-service
+    container_name: wallet-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_USERNAME: postgre
+      DB_PASSWORD: root
+      JWT_SECRET: digitalWalletSuperSecretKeyForJwtTokenSigningMustBe256BitsLong1234	  
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+
+    depends_on:
+      - wallet-db
+      - eureka-server
+volumes:
+  user-db-data:
+  wallet-db-data:

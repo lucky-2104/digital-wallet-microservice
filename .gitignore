@@ -1,0 +1,16 @@
+# Build files
+**/target/
+
+# IDE files
+**/.classpath
+**/.project
+**/.settings/
+**/.idea/
+**/*.iml
+
+# Local config
+**/application-local.properties
+
+# OS
+.DS_Store
+Thumbs.db
