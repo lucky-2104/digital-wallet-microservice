@@ -6,19 +6,6 @@ A production-grade microservices-based digital wallet system built with Java 21
 and Spring Boot 4.x. Users can register, manage digital wallets and perform
 secure money transactions including deposits, withdrawals and peer-to-peer transfers.
 
----
-
-## Architecture
-
-Client
-↓
-User Service (port 8081) ←→ Wallet Service (port 8082)
-↓ ↓
-user_db wallet_db
-(PostgreSQL) (PostgreSQL)
-↑ ↑
-Eureka Server
-(port 8761)
 
 ---
 
